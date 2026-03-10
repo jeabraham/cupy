@@ -374,10 +374,11 @@ def _compile_using_nvrtc_no_warning(
             options, headers, include_names = _jitify_prep(
                 source, options, cu_path)
         else:
-            # Some tests/kernels require the following option:
-            options += ('--device-as-default-execution-space',)
-
+            # HIPRTC does not accept this NVRTC option.
+            if not runtime.is_hip:
+                options += ('--device-as-default-execution-space',)
             headers = include_names = ()
+
             major_version, minor_version = _get_nvrtc_version()
 
             if ((major_version >= 13 or
